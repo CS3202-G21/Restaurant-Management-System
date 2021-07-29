@@ -68,7 +68,7 @@ WSGI_APPLICATION = 'rms_back_end.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-from .local_settings import *
+from .config import *
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
