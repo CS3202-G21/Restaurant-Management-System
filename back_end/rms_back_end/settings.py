@@ -28,7 +28,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'rooms',
+    'rooms.apps.RoomsConfig',
+    'room_types.apps.RoomTypesConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
