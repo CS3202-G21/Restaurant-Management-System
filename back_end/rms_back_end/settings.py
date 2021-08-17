@@ -18,6 +18,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'rooms.apps.RoomsConfig',
     'room_types.apps.RoomTypesConfig',
+    'restaurants.apps.RestaurantsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
