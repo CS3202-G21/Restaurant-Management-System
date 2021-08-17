@@ -61,6 +61,7 @@ WSGI_APPLICATION = 'rms_back_end.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 # Secret key and database connection
+
 from .local_settings import *
 
 # Password validation
