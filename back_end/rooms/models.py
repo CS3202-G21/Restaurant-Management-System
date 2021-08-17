@@ -18,7 +18,7 @@ class Room(models.Model):
     status = models.CharField(max_length=10, choices=room_statuses, default=VACANT)
     date_added = models.DateTimeField(default=datetime.now, blank=True)
 
-    customer_id = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True)
+    customer_id = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True, blank=True)
 
     def __str__(self):
         return str(self.room_number)
