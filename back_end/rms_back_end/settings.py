@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'rooms.apps.RoomsConfig',
     'room_types.apps.RoomTypesConfig',
     'restaurants.apps.RestaurantsConfig',
+    'menu_items.apps.MenuItemsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
