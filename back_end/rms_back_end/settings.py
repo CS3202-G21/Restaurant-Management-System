@@ -19,13 +19,21 @@ INSTALLED_APPS = [
     'rooms.apps.RoomsConfig',
     'room_types.apps.RoomTypesConfig',
     'restaurants.apps.RestaurantsConfig',
+    'menu_items.apps.MenuItemsConfig',
+    'special_offers.apps.SpecialOffersConfig',
+    'customers.apps.CustomersConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'knox'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',)
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
