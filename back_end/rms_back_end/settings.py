@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'menu_items.apps.MenuItemsConfig',
     'special_offers.apps.SpecialOffersConfig',
     'customers.apps.CustomersConfig',
+    'staff.apps.StaffConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

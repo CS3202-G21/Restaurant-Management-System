@@ -14,7 +14,8 @@ class RegisterCustomerAPI(generics.GenericAPIView):
         customer = serializer.save()
         return Response({
             "user": CustomerSerializer(customer, context=self.get_serializer_context()).data,
-            "token": AuthToken.objects.create(customer)[1]
+            "token": AuthToken.objects.create(customer)[1],
+            "user_class": 0
         })
 
 
@@ -28,7 +29,8 @@ class LoginCustomerAPI(generics.GenericAPIView):
         customer = serializer.validated_data
         return Response({
             "user": CustomerSerializer(customer, context=self.get_serializer_context()).data,
-            "token": AuthToken.objects.create(customer)[1]
+            "token": AuthToken.objects.create(customer)[1],
+            "user_class:": 0
         })
 
 
