@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'special_offers.apps.SpecialOffersConfig',
     'customers.apps.CustomersConfig',
     'staff.apps.StaffConfig',
+    'room_reservations.apps.RoomReservationsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
