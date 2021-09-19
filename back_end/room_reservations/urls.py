@@ -1,7 +1,7 @@
-from rest_framework import routers
-from .api import RoomViewSet
+from django.urls import path, include
+from .api import RoomReservationViewSet
+from knox import views as knox_views
 
-router = routers.DefaultRouter()
-router.register('api/room_reservations', RoomViewSet, 'room_reservations')
-
-urlpatterns = router.urls
+urlpatterns = [
+    path('api/room_reservations', RoomReservationViewSet.as_view()),
+]
