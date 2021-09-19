@@ -6,13 +6,14 @@ from rest_framework.response import Response
 from .serializers import RoomReservationSerializer
 from datetime import datetime, date
 from rest_framework import serializers
+from django.forms.models import model_to_dict
 
 
 # Room Reservation ViewSet
 class RoomReservationViewSet(generics.GenericAPIView):
     queryset = RoomReservation.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticated
     ]
     serializer_class = RoomReservationSerializer
 
@@ -29,6 +30,66 @@ class RoomReservationViewSet(generics.GenericAPIView):
 
         return Response({
             "room_reservation": RoomReservationSerializer(room_reservation, context=self.get_serializer_context()).data
+        })
+
+
+class RoomReservationSuccessViewSet(generics.GenericAPIView):
+    # queryset = RoomReservation.objects.all()
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    serializer_class = RoomReservationSerializer
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        reservation_id = data['reservation_id']
+        reservation = RoomReservation.objects.get(id=reservation_id)
+        reservation.payment_status = True
+        reservation.total_price = str(reservation.total_price)
+        reservation.save()
+
+        return Response({
+            "room_reservation": RoomReservationSerializer(reservation, context=self.get_serializer_context()).data
+        })
+
+
+class RoomCheckInViewSet(generics.GenericAPIView):
+    # queryset = RoomReservation.objects.all()
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    serializer_class = RoomReservationSerializer
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        reservation_id = data['reservation_id']
+        reservation = RoomReservation.objects.get(id=reservation_id)
+        reservation.checked_in = True
+        reservation.total_price = str(reservation.total_price)
+        reservation.save()
+
+        return Response({
+            "room_reservation": RoomReservationSerializer(reservation, context=self.get_serializer_context()).data
+        })
+
+
+class RoomCheckOutViewSet(generics.GenericAPIView):
+    # queryset = RoomReservation.objects.all()
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    serializer_class = RoomReservationSerializer
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        reservation_id = data['reservation_id']
+        reservation = RoomReservation.objects.get(id=reservation_id)
+        reservation.checked_out = True
+        reservation.total_price = str(reservation.total_price)
+        reservation.save()
+
+        return Response({
+            "room_reservation": RoomReservationSerializer(reservation, context=self.get_serializer_context()).data
         })
 
 
