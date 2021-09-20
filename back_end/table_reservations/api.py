@@ -56,6 +56,7 @@ class TableReservationViewSet(generics.GenericAPIView):
         })
 
 
+# View Set to get the available reservations for today
 class GetTodayTableReservationsViewSet(generics.GenericAPIView):
     permission_classes = [
         permissions.IsAuthenticated
@@ -100,6 +101,7 @@ class GetTodayTableReservationsViewSet(generics.GenericAPIView):
         return Response({"table_reservations": table_reservations})
 
 
+# View Set to get the available reservations for a customer
 class TableReservationArrivalViewSet(generics.GenericAPIView):
     permission_classes = [
         permissions.IsAuthenticated

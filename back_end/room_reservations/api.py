@@ -44,8 +44,8 @@ class RoomReservationViewSet(generics.GenericAPIView):
         })
 
 
+# View Set to update payment success
 class RoomReservationSuccessViewSet(generics.GenericAPIView):
-    # queryset = RoomReservation.objects.all()
     permission_classes = [
         permissions.IsAuthenticated
     ]
@@ -69,8 +69,8 @@ class RoomReservationSuccessViewSet(generics.GenericAPIView):
         })
 
 
+# View Set to update check in
 class RoomCheckInViewSet(generics.GenericAPIView):
-    # queryset = RoomReservation.objects.all()
     permission_classes = [
         permissions.IsAuthenticated
     ]
@@ -94,8 +94,8 @@ class RoomCheckInViewSet(generics.GenericAPIView):
         })
 
 
+# View Set to update check out
 class RoomCheckOutViewSet(generics.GenericAPIView):
-    # queryset = RoomReservation.objects.all()
     permission_classes = [
         permissions.IsAuthenticated
     ]
@@ -119,6 +119,7 @@ class RoomCheckOutViewSet(generics.GenericAPIView):
         })
 
 
+# View Set to add a room review
 class AddRoomReviewViewSet(generics.GenericAPIView):
     permission_classes = [
         permissions.IsAuthenticated
@@ -153,13 +154,16 @@ def get_total_price(data):
 
     num_of_days = date(e_y, e_m, e_d) - date(s_y, s_m, s_d)
 
-    return num_of_days.days * float(str(room_price)), datetime(s_y, s_m, s_d, s_h, s_mi, s_s), datetime(e_y, e_m, e_d, e_h, e_mi, e_s)
+    return num_of_days.days * float(str(room_price)), datetime(s_y, s_m, s_d, s_h, s_mi, s_s), datetime(e_y, e_m, e_d,
+                                                                                                        e_h, e_mi, e_s)
 
 
 def are_dates_booked(start_date, end_date, room_id):
-    prev_reservations_from_start = RoomReservation.objects.filter(room=room_id, start_date__lte=start_date, end_date__gt=start_date)
+    prev_reservations_from_start = RoomReservation.objects.filter(room=room_id, start_date__lte=start_date,
+                                                                  end_date__gt=start_date)
     if len(prev_reservations_from_start) == 0:
-        prev_reservations_from_end = RoomReservation.objects.filter(room=room_id, start_date__lt=end_date, end_date__gte=end_date)
+        prev_reservations_from_end = RoomReservation.objects.filter(room=room_id, start_date__lt=end_date,
+                                                                    end_date__gte=end_date)
         if len(prev_reservations_from_end) == 0:
             return False
     return True
