@@ -6,19 +6,30 @@ from rest_framework.response import Response
 from .serializers import RoomReservationSerializer
 from datetime import datetime, date
 from rest_framework import serializers
-from django.forms.models import model_to_dict
 
 
 # Room Reservation ViewSet
 class RoomReservationViewSet(generics.GenericAPIView):
-    queryset = RoomReservation.objects.all()
     permission_classes = [
         permissions.IsAuthenticated
     ]
     serializer_class = RoomReservationSerializer
 
+    def get(self, request):
+        room_reservations_objs = RoomReservation.objects.filter(customer=request.user.id)
+        room_reservations = []
+
+        for obj in room_reservations_objs:
+            reservation = obj.__dict__
+            reservation.pop('_state')
+            reservation['total_price'] = float(str(reservation['total_price']))
+            room_reservations.append(reservation)
+
+        return Response({"room_reservations": room_reservations})
+
     def post(self, request, *args, **kwargs):
         data = request.data
+        data['customer'] = request.user.id
         data['total_price'], start_date, end_date = get_total_price(data)
 
         if are_dates_booked(start_date, end_date, data['room']):
@@ -43,7 +54,12 @@ class RoomReservationSuccessViewSet(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         data = request.data
         reservation_id = data['reservation_id']
-        reservation = RoomReservation.objects.get(id=reservation_id)
+
+        try:
+            reservation = RoomReservation.objects.get(id=reservation_id, customer=request.user.id)
+        except RoomReservation.DoesNotExist:
+            raise serializers.ValidationError("Invalid Access")
+
         reservation.payment_status = True
         reservation.total_price = str(reservation.total_price)
         reservation.save()
@@ -63,9 +79,14 @@ class RoomCheckInViewSet(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         data = request.data
         reservation_id = data['reservation_id']
-        reservation = RoomReservation.objects.get(id=reservation_id)
+
+        try:
+            reservation = RoomReservation.objects.get(id=reservation_id, customer=request.user.id)
+        except RoomReservation.DoesNotExist:
+            raise serializers.ValidationError("Invalid Access")
+
         reservation.checked_in = True
-        reservation.total_price = str(reservation.total_price)
+        reservation.total_price = float(str(reservation.total_price))
         reservation.save()
 
         return Response({
@@ -83,9 +104,37 @@ class RoomCheckOutViewSet(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         data = request.data
         reservation_id = data['reservation_id']
-        reservation = RoomReservation.objects.get(id=reservation_id)
+
+        try:
+            reservation = RoomReservation.objects.get(id=reservation_id, customer=request.user.id)
+        except RoomReservation.DoesNotExist:
+            raise serializers.ValidationError("Invalid Access")
+
         reservation.checked_out = True
-        reservation.total_price = str(reservation.total_price)
+        reservation.total_price = float(str(reservation.total_price))
+        reservation.save()
+
+        return Response({
+            "room_reservation": RoomReservationSerializer(reservation, context=self.get_serializer_context()).data
+        })
+
+
+class AddRoomReviewViewSet(generics.GenericAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    serializer_class = RoomReservationSerializer
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        reservation_id = data['reservation_id']
+        try:
+            reservation = RoomReservation.objects.get(id=reservation_id, customer=request.user.id)
+        except RoomReservation.DoesNotExist:
+            raise serializers.ValidationError("Invalid Access")
+
+        reservation.customer_review = data['customer_review']
+        reservation.total_price = float(str(reservation.total_price))
         reservation.save()
 
         return Response({
