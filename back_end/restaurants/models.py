@@ -18,6 +18,10 @@ class Restaurant(models.Model):
     type = models.CharField(max_length=255)
     status = models.CharField(max_length=50, choices=room_statuses, default=AVAILABLE)
     number_of_tables = models.IntegerField()
+    max_number_of_people_for_reservation = models.IntegerField(default=50, blank=True)  # max number of people that can be pre-booked for a restaurant for a specific meal time in a specific day
+    breakfast = models.BooleanField(default=False)
+    lunch = models.BooleanField(default=False)
+    dinner = models.BooleanField(default=False)
     description = models.TextField(blank=True)
     photo_main = models.ImageField(upload_to='photos/restaurants/main')
     photo_1 = models.ImageField(upload_to='photos/restaurants/other', blank=True)
