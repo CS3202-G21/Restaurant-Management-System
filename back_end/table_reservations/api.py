@@ -56,6 +56,50 @@ class TableReservationViewSet(generics.GenericAPIView):
         })
 
 
+class GetTodayTableReservationsViewSet(generics.GenericAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    serializer_class = TableReservationSerializer
+
+    def get(self, request):
+        BREAKFAST = 'breakfast'
+        LUNCH = 'lunch'
+        DINNER = 'dinner'
+        meal_times = (
+            (BREAKFAST, 'Breakfast'),
+            (LUNCH, 'Lunch'),
+            (DINNER, 'Dinner')
+        )
+
+        today = datetime.now().date()
+        time_now = datetime.now().time()
+
+        breakfast_begin = time_now.replace(hour=6, minute=0, second=0, microsecond=0)
+        breakfast_end = time_now.replace(hour=10, minute=30, second=0, microsecond=0)
+        lunch_begin = time_now.replace(hour=12, minute=0, second=0, microsecond=0)
+        lunch_end = time_now.replace(hour=15, minute=30, second=0, microsecond=0)
+        dinner_begin = time_now.replace(hour=19, minute=30, second=0, microsecond=0)
+        dinner_end = time_now.replace(hour=22, minute=30, second=0, microsecond=0)
+
+        if breakfast_begin <= time_now <= breakfast_end:
+            table_reservations_objs = TableReservation.objects.filter(reserved_date=today, meal_time=BREAKFAST)
+        elif lunch_begin <= time_now <= lunch_end:
+            table_reservations_objs = TableReservation.objects.filter(reserved_date=today, meal_time=LUNCH)
+        elif dinner_begin <= time_now <= dinner_end:
+            table_reservations_objs = TableReservation.objects.filter(reserved_date=today, meal_time=DINNER)
+        else:
+            raise serializers.ValidationError("No Meal Provided at this Time.")
+        table_reservations = []
+
+        for obj in table_reservations_objs:
+            reservation = obj.__dict__
+            reservation.pop('_state')
+            table_reservations.append(reservation)
+
+        return Response({"table_reservations": table_reservations})
+
+
 class TableReservationArrivalViewSet(generics.GenericAPIView):
     permission_classes = [
         permissions.IsAuthenticated
