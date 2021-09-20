@@ -10,6 +10,7 @@ from django.db.models import Sum
 
 # Table Reservation ViewSet
 class TableReservationViewSet(generics.GenericAPIView):
+    # TODO check if customer
 
     permission_classes = [
         permissions.IsAuthenticated
@@ -58,6 +59,7 @@ class TableReservationViewSet(generics.GenericAPIView):
 
 # View Set to get the available reservations for today
 class GetTodayTableReservationsViewSet(generics.GenericAPIView):
+    # TODO check if waiter
     permission_classes = [
         permissions.IsAuthenticated
     ]
@@ -101,8 +103,9 @@ class GetTodayTableReservationsViewSet(generics.GenericAPIView):
         return Response({"table_reservations": table_reservations})
 
 
-# View Set to get the available reservations for a customer
+# View Set to get update customer arrival
 class TableReservationArrivalViewSet(generics.GenericAPIView):
+    # TODO check if waiter
     permission_classes = [
         permissions.IsAuthenticated
     ]

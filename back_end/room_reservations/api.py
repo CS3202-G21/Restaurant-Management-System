@@ -15,6 +15,8 @@ class RoomReservationViewSet(generics.GenericAPIView):
     ]
     serializer_class = RoomReservationSerializer
 
+    # TODO check if customer
+
     def get(self, request):
         room_reservations_objs = RoomReservation.objects.filter(customer=request.user.id)
         room_reservations = []
@@ -71,6 +73,7 @@ class RoomReservationSuccessViewSet(generics.GenericAPIView):
 
 # View Set to update check in
 class RoomCheckInViewSet(generics.GenericAPIView):
+    # TODO check if receptionist
     permission_classes = [
         permissions.IsAuthenticated
     ]
@@ -96,6 +99,7 @@ class RoomCheckInViewSet(generics.GenericAPIView):
 
 # View Set to update check out
 class RoomCheckOutViewSet(generics.GenericAPIView):
+    # TODO check if receptionist
     permission_classes = [
         permissions.IsAuthenticated
     ]
@@ -121,6 +125,7 @@ class RoomCheckOutViewSet(generics.GenericAPIView):
 
 # View Set to add a room review
 class AddRoomReviewViewSet(generics.GenericAPIView):
+    # TODO check if customer
     permission_classes = [
         permissions.IsAuthenticated
     ]
