@@ -30,6 +30,10 @@ class LoginCustomerSerializer(serializers.Serializer):
 
     def validate(self, data):
         user = authenticate(**data)
+
         if user and user.is_active:
-            return user
+            group = user.groups.all()
+            if not group:
+                return user
         raise serializers.ValidationError("Incorrect Credentials")
+

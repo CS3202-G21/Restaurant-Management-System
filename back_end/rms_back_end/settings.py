@@ -22,13 +22,17 @@ INSTALLED_APPS = [
     'menu_items.apps.MenuItemsConfig',
     'special_offers.apps.SpecialOffersConfig',
     'customers.apps.CustomersConfig',
+    'staff.apps.StaffConfig',
+    'room_reservations.apps.RoomReservationsConfig',
+    'table_reservations.apps.TableReservationsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'knox'
+    'knox',
+    'corsheaders',
 ]
 
 REST_FRAMEWORK = {
@@ -43,7 +47,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'rms_back_end.urls'
 
@@ -102,6 +109,7 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
