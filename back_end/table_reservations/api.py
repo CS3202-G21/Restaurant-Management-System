@@ -6,18 +6,21 @@ from .serializers import TableReservationSerializer
 from datetime import datetime, date
 from rest_framework import serializers
 from django.db.models import Sum
+from middleware.user_group_validation import is_customer, is_staff
+from middleware.meal_times_enum import meal_times
 
 
 # Table Reservation ViewSet
 class TableReservationViewSet(generics.GenericAPIView):
-    # TODO check if customer
-
     permission_classes = [
         permissions.IsAuthenticated
     ]
     serializer_class = TableReservationSerializer
 
     def get(self, request):
+        if not is_customer(request.user):
+            raise serializers.ValidationError("Access Denied: You are not a customer")
+
         table_reservations_objs = TableReservation.objects.filter(customer=request.user.id)
         table_reservations = []
 
@@ -29,14 +32,8 @@ class TableReservationViewSet(generics.GenericAPIView):
         return Response({"table_reservations": table_reservations})
 
     def post(self, request, *args, **kwargs):
-        BREAKFAST = 'breakfast'
-        LUNCH = 'lunch'
-        DINNER = 'dinner'
-        meal_times = (
-            (BREAKFAST, 'Breakfast'),
-            (LUNCH, 'Lunch'),
-            (DINNER, 'Dinner')
-        )
+        if not is_customer(request.user):
+            raise serializers.ValidationError("Access Denied: You are not a customer")
 
         data = request.data
         data['customer'] = request.user.id
@@ -59,21 +56,14 @@ class TableReservationViewSet(generics.GenericAPIView):
 
 # View Set to get the available reservations for today
 class GetTodayTableReservationsViewSet(generics.GenericAPIView):
-    # TODO check if waiter
     permission_classes = [
         permissions.IsAuthenticated
     ]
     serializer_class = TableReservationSerializer
 
     def get(self, request):
-        BREAKFAST = 'breakfast'
-        LUNCH = 'lunch'
-        DINNER = 'dinner'
-        meal_times = (
-            (BREAKFAST, 'Breakfast'),
-            (LUNCH, 'Lunch'),
-            (DINNER, 'Dinner')
-        )
+        if not is_staff(request.user, 3):
+            raise serializers.ValidationError("Access Denied: You are not a waiter")
 
         today = datetime.now().date()
         time_now = datetime.now().time()
@@ -86,11 +76,11 @@ class GetTodayTableReservationsViewSet(generics.GenericAPIView):
         dinner_end = time_now.replace(hour=22, minute=30, second=0, microsecond=0)
 
         if breakfast_begin <= time_now <= breakfast_end:
-            table_reservations_objs = TableReservation.objects.filter(reserved_date=today, meal_time=BREAKFAST)
+            table_reservations_objs = TableReservation.objects.filter(reserved_date=today, meal_time=meal_times[0][0])
         elif lunch_begin <= time_now <= lunch_end:
-            table_reservations_objs = TableReservation.objects.filter(reserved_date=today, meal_time=LUNCH)
+            table_reservations_objs = TableReservation.objects.filter(reserved_date=today, meal_time=meal_times[1][0])
         elif dinner_begin <= time_now <= dinner_end:
-            table_reservations_objs = TableReservation.objects.filter(reserved_date=today, meal_time=DINNER)
+            table_reservations_objs = TableReservation.objects.filter(reserved_date=today, meal_time=meal_times[2][0])
         else:
             raise serializers.ValidationError("No Meal Provided at this Time.")
         table_reservations = []
@@ -105,13 +95,15 @@ class GetTodayTableReservationsViewSet(generics.GenericAPIView):
 
 # View Set to get update customer arrival
 class TableReservationArrivalViewSet(generics.GenericAPIView):
-    # TODO check if waiter
     permission_classes = [
         permissions.IsAuthenticated
     ]
     serializer_class = TableReservationSerializer
 
     def post(self, request, *args, **kwargs):
+        if not is_staff(request.user, 3):
+            raise serializers.ValidationError("Access Denied: You are not a waiter")
+
         data = request.data
         reservation_id = data['reservation_id']
 
@@ -152,6 +144,6 @@ def is_meal_time_served_by_restaurant(restaurant, meal_time):
     elif meal_time == 'lunch':
         return Restaurant.objects.filter(id=restaurant)[0].lunch
     elif meal_time == 'dinner':
-        return Restaurant.objects.filter(id=restaurant)[0].breakfast
+        return Restaurant.objects.filter(id=restaurant)[0].dinner
     else:
         raise serializers.ValidationError("Invalid Meal Time")

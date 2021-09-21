@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from .serializers import RoomReservationSerializer
 from datetime import datetime, date
 from rest_framework import serializers
+from middleware.user_group_validation import is_customer, is_staff
 
 
 # Room Reservation ViewSet
@@ -15,9 +16,10 @@ class RoomReservationViewSet(generics.GenericAPIView):
     ]
     serializer_class = RoomReservationSerializer
 
-    # TODO check if customer
-
     def get(self, request):
+        if not is_customer(request.user):
+            raise serializers.ValidationError("Access Denied: You are not a customer")
+
         room_reservations_objs = RoomReservation.objects.filter(customer=request.user.id)
         room_reservations = []
 
@@ -30,6 +32,9 @@ class RoomReservationViewSet(generics.GenericAPIView):
         return Response({"room_reservations": room_reservations})
 
     def post(self, request, *args, **kwargs):
+        if not is_customer(request.user):
+            raise serializers.ValidationError("Access Denied: You are not a customer")
+
         data = request.data
         data['customer'] = request.user.id
         data['total_price'], start_date, end_date = get_total_price(data)
@@ -73,18 +78,20 @@ class RoomReservationSuccessViewSet(generics.GenericAPIView):
 
 # View Set to update check in
 class RoomCheckInViewSet(generics.GenericAPIView):
-    # TODO check if receptionist
     permission_classes = [
         permissions.IsAuthenticated
     ]
     serializer_class = RoomReservationSerializer
 
     def post(self, request, *args, **kwargs):
+        if not is_staff(request.user, 2):
+            raise serializers.ValidationError("Access Denied: You are not a receptionist")
+
         data = request.data
         reservation_id = data['reservation_id']
 
         try:
-            reservation = RoomReservation.objects.get(id=reservation_id, customer=request.user.id)
+            reservation = RoomReservation.objects.get(id=reservation_id)
         except RoomReservation.DoesNotExist:
             raise serializers.ValidationError("Invalid Access")
 
@@ -99,18 +106,20 @@ class RoomCheckInViewSet(generics.GenericAPIView):
 
 # View Set to update check out
 class RoomCheckOutViewSet(generics.GenericAPIView):
-    # TODO check if receptionist
     permission_classes = [
         permissions.IsAuthenticated
     ]
     serializer_class = RoomReservationSerializer
 
     def post(self, request, *args, **kwargs):
+        if not is_staff(request.user, 2):
+            raise serializers.ValidationError("Access Denied: You are not a receptionist")
+
         data = request.data
         reservation_id = data['reservation_id']
 
         try:
-            reservation = RoomReservation.objects.get(id=reservation_id, customer=request.user.id)
+            reservation = RoomReservation.objects.get(id=reservation_id)
         except RoomReservation.DoesNotExist:
             raise serializers.ValidationError("Invalid Access")
 
@@ -125,13 +134,15 @@ class RoomCheckOutViewSet(generics.GenericAPIView):
 
 # View Set to add a room review
 class AddRoomReviewViewSet(generics.GenericAPIView):
-    # TODO check if customer
     permission_classes = [
         permissions.IsAuthenticated
     ]
     serializer_class = RoomReservationSerializer
 
     def post(self, request, *args, **kwargs):
+        if not is_customer(request.user):
+            raise serializers.ValidationError("Access Denied: You are not a customer")
+
         data = request.data
         reservation_id = data['reservation_id']
         try:
