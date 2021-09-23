@@ -22,10 +22,6 @@ class RegisterCustomerAPI(generics.GenericAPIView):
 # Login API
 class LoginCustomerAPI(generics.GenericAPIView):
     serializer_class = LoginCustomerSerializer
-<<<<<<< HEAD
-=======
-
->>>>>>> 7b6ec6af1e35b280ef8349566087930c3aeb455f
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
