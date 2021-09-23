@@ -50,7 +50,7 @@ class TableReservationViewSet(generics.GenericAPIView):
         table_reservation = serializer.save()
 
         return Response({
-            "room_reservation": TableReservationSerializer(table_reservation, context=self.get_serializer_context()).data
+            "table_reservation": TableReservationSerializer(table_reservation, context=self.get_serializer_context()).data
         })
 
 
@@ -108,7 +108,7 @@ class TableReservationArrivalViewSet(generics.GenericAPIView):
         reservation_id = data['reservation_id']
 
         try:
-            reservation = TableReservation.objects.get(id=reservation_id, customer=request.user.id)
+            reservation = TableReservation.objects.get(id=reservation_id)
         except TableReservation.DoesNotExist:
             raise serializers.ValidationError("Invalid Access")
 
@@ -119,7 +119,7 @@ class TableReservationArrivalViewSet(generics.GenericAPIView):
             raise serializers.ValidationError("Today is not the Reserved Date.")
 
         return Response({
-            "room_reservation": TableReservationSerializer(reservation, context=self.get_serializer_context()).data
+            "table_reservation": TableReservationSerializer(reservation, context=self.get_serializer_context()).data
         })
 
 
