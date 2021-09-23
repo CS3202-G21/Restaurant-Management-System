@@ -11,5 +11,9 @@ urlpatterns = [
     path('', include('customers.urls')),
     path('', include('staff.urls')),
     path('', include('room_reservations.urls')),
+<<<<<<< HEAD
+=======
+    path('', include('table_reservations.urls')),
+>>>>>>> 7b6ec6af1e35b280ef8349566087930c3aeb455f
     path('admin/', admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

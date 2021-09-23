@@ -6,6 +6,10 @@ from rest_framework.response import Response
 from .serializers import RoomReservationSerializer
 from datetime import datetime, date
 from rest_framework import serializers
+<<<<<<< HEAD
+=======
+from middleware.user_group_validation import is_customer, is_staff
+>>>>>>> 7b6ec6af1e35b280ef8349566087930c3aeb455f
 
 
 # Room Reservation ViewSet
@@ -16,6 +20,12 @@ class RoomReservationViewSet(generics.GenericAPIView):
     serializer_class = RoomReservationSerializer
 
     def get(self, request):
+<<<<<<< HEAD
+=======
+        if not is_customer(request.user):
+            raise serializers.ValidationError("Access Denied: You are not a customer")
+
+>>>>>>> 7b6ec6af1e35b280ef8349566087930c3aeb455f
         room_reservations_objs = RoomReservation.objects.filter(customer=request.user.id)
         room_reservations = []
 
@@ -28,6 +38,12 @@ class RoomReservationViewSet(generics.GenericAPIView):
         return Response({"room_reservations": room_reservations})
 
     def post(self, request, *args, **kwargs):
+<<<<<<< HEAD
+=======
+        if not is_customer(request.user):
+            raise serializers.ValidationError("Access Denied: You are not a customer")
+
+>>>>>>> 7b6ec6af1e35b280ef8349566087930c3aeb455f
         data = request.data
         data['customer'] = request.user.id
         data['total_price'], start_date, end_date = get_total_price(data)
@@ -44,8 +60,13 @@ class RoomReservationViewSet(generics.GenericAPIView):
         })
 
 
+<<<<<<< HEAD
 class RoomReservationSuccessViewSet(generics.GenericAPIView):
     # queryset = RoomReservation.objects.all()
+=======
+# View Set to update payment success
+class RoomReservationSuccessViewSet(generics.GenericAPIView):
+>>>>>>> 7b6ec6af1e35b280ef8349566087930c3aeb455f
     permission_classes = [
         permissions.IsAuthenticated
     ]
@@ -69,19 +90,34 @@ class RoomReservationSuccessViewSet(generics.GenericAPIView):
         })
 
 
+<<<<<<< HEAD
 class RoomCheckInViewSet(generics.GenericAPIView):
     # queryset = RoomReservation.objects.all()
+=======
+# View Set to update check in
+class RoomCheckInViewSet(generics.GenericAPIView):
+>>>>>>> 7b6ec6af1e35b280ef8349566087930c3aeb455f
     permission_classes = [
         permissions.IsAuthenticated
     ]
     serializer_class = RoomReservationSerializer
 
     def post(self, request, *args, **kwargs):
+<<<<<<< HEAD
+=======
+        if not is_staff(request.user, 2):
+            raise serializers.ValidationError("Access Denied: You are not a receptionist")
+
+>>>>>>> 7b6ec6af1e35b280ef8349566087930c3aeb455f
         data = request.data
         reservation_id = data['reservation_id']
 
         try:
+<<<<<<< HEAD
             reservation = RoomReservation.objects.get(id=reservation_id, customer=request.user.id)
+=======
+            reservation = RoomReservation.objects.get(id=reservation_id)
+>>>>>>> 7b6ec6af1e35b280ef8349566087930c3aeb455f
         except RoomReservation.DoesNotExist:
             raise serializers.ValidationError("Invalid Access")
 
@@ -94,19 +130,34 @@ class RoomCheckInViewSet(generics.GenericAPIView):
         })
 
 
+<<<<<<< HEAD
 class RoomCheckOutViewSet(generics.GenericAPIView):
     # queryset = RoomReservation.objects.all()
+=======
+# View Set to update check out
+class RoomCheckOutViewSet(generics.GenericAPIView):
+>>>>>>> 7b6ec6af1e35b280ef8349566087930c3aeb455f
     permission_classes = [
         permissions.IsAuthenticated
     ]
     serializer_class = RoomReservationSerializer
 
     def post(self, request, *args, **kwargs):
+<<<<<<< HEAD
+=======
+        if not is_staff(request.user, 2):
+            raise serializers.ValidationError("Access Denied: You are not a receptionist")
+
+>>>>>>> 7b6ec6af1e35b280ef8349566087930c3aeb455f
         data = request.data
         reservation_id = data['reservation_id']
 
         try:
+<<<<<<< HEAD
             reservation = RoomReservation.objects.get(id=reservation_id, customer=request.user.id)
+=======
+            reservation = RoomReservation.objects.get(id=reservation_id)
+>>>>>>> 7b6ec6af1e35b280ef8349566087930c3aeb455f
         except RoomReservation.DoesNotExist:
             raise serializers.ValidationError("Invalid Access")
 
@@ -119,6 +170,10 @@ class RoomCheckOutViewSet(generics.GenericAPIView):
         })
 
 
+<<<<<<< HEAD
+=======
+# View Set to add a room review
+>>>>>>> 7b6ec6af1e35b280ef8349566087930c3aeb455f
 class AddRoomReviewViewSet(generics.GenericAPIView):
     permission_classes = [
         permissions.IsAuthenticated
@@ -126,6 +181,12 @@ class AddRoomReviewViewSet(generics.GenericAPIView):
     serializer_class = RoomReservationSerializer
 
     def post(self, request, *args, **kwargs):
+<<<<<<< HEAD
+=======
+        if not is_customer(request.user):
+            raise serializers.ValidationError("Access Denied: You are not a customer")
+
+>>>>>>> 7b6ec6af1e35b280ef8349566087930c3aeb455f
         data = request.data
         reservation_id = data['reservation_id']
         try:
@@ -153,6 +214,7 @@ def get_total_price(data):
 
     num_of_days = date(e_y, e_m, e_d) - date(s_y, s_m, s_d)
 
+<<<<<<< HEAD
     return num_of_days.days * float(str(room_price)), datetime(s_y, s_m, s_d, s_h, s_mi, s_s), datetime(e_y, e_m, e_d, e_h, e_mi, e_s)
 
 
@@ -160,6 +222,18 @@ def are_dates_booked(start_date, end_date, room_id):
     prev_reservations_from_start = RoomReservation.objects.filter(room=room_id, start_date__lte=start_date, end_date__gt=start_date)
     if len(prev_reservations_from_start) == 0:
         prev_reservations_from_end = RoomReservation.objects.filter(room=room_id, start_date__lt=end_date, end_date__gte=end_date)
+=======
+    return num_of_days.days * float(str(room_price)), datetime(s_y, s_m, s_d, s_h, s_mi, s_s), datetime(e_y, e_m, e_d,
+                                                                                                        e_h, e_mi, e_s)
+
+
+def are_dates_booked(start_date, end_date, room_id):
+    prev_reservations_from_start = RoomReservation.objects.filter(room=room_id, start_date__lte=start_date,
+                                                                  end_date__gt=start_date)
+    if len(prev_reservations_from_start) == 0:
+        prev_reservations_from_end = RoomReservation.objects.filter(room=room_id, start_date__lt=end_date,
+                                                                    end_date__gte=end_date)
+>>>>>>> 7b6ec6af1e35b280ef8349566087930c3aeb455f
         if len(prev_reservations_from_end) == 0:
             return False
     return True

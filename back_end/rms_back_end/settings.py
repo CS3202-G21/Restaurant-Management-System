@@ -11,7 +11,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+<<<<<<< HEAD
 ALLOWED_HOSTS = ['192.168.122.1', '192.168.8.101']
+=======
+ALLOWED_HOSTS = []
+>>>>>>> 7b6ec6af1e35b280ef8349566087930c3aeb455f
 
 # Application definition
 
@@ -24,6 +28,10 @@ INSTALLED_APPS = [
     'customers.apps.CustomersConfig',
     'staff.apps.StaffConfig',
     'room_reservations.apps.RoomReservationsConfig',
+<<<<<<< HEAD
+=======
+    'table_reservations.apps.TableReservationsConfig',
+>>>>>>> 7b6ec6af1e35b280ef8349566087930c3aeb455f
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -76,6 +84,7 @@ WSGI_APPLICATION = 'rms_back_end.wsgi.application'
 
 # Secret key and database connection
 
+<<<<<<< HEAD
 # from .local_settings import *
 SECRET_KEY = 'django-insecure-7-01%tpb%49_!eo*n5elvl%lpjuz5vb%&e2q@wt%-xn173*80@'
 
@@ -90,6 +99,10 @@ DATABASES = {
         }
     }
 }
+=======
+from .local_settings import *
+
+>>>>>>> 7b6ec6af1e35b280ef8349566087930c3aeb455f
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
